@@ -97,12 +97,10 @@ void print_error(FILE *error, enum error err_code)
 		case ERR_BAD_DATA:
 			fprintf(error, "[ERROR] bad input data\n");
 			break;
-		case ERR_UNKNOWN:
-			fprintf(error, "[ERROR] an unknown error occured\n");
-			break;
 		case ERR_ARG_CNT:
 			fprintf(error, "[ERROR] Wrong arguments. Usage: quadradq input [output]\n");
 			break;
+		case ERR_UNKNOWN:
 		default:
 			fprintf(error, "[ERROR] an unknown error occured\n");
 	}

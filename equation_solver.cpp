@@ -27,7 +27,7 @@ void solve_quadratic(struct Coefficients coeffs, struct Roots_info *roots)
 
 	if (discmnt > 0) {
 		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
-		roots->x2 = round(roots->x1 / PRECISION) * PRECISION;
+		roots->x2 = round(roots->x2 / PRECISION) * PRECISION;
 		roots->n = TWO_ROOTS;
 		return;
 	}

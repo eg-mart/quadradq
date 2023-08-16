@@ -5,9 +5,24 @@
 int isclose(double x, double y);
 int quadsolve(double a, double b, double c, double *x1, double *x2);
 
-int isclose(double x, double y)
-{
-	return fabs(x - y) <= DBL_EPSILON;
+int main() {
+	double a, b, c, x1, x2;
+
+	if (scanf("%lf %lf %lf", &a, &b, &c) < 3) {
+		printf("Произошла ошибка ввода!");
+		return -1;
+	}
+
+	int stat = quadsolve(a, b, c, &x1, &x2);
+
+	if (stat < 0)
+		printf("Решений не найдено.");
+	else if (stat == 0)
+		printf("Найдено 1 решение: %.4lf", x1);
+	else
+		printf("Найдено 2 решения: %.4lf %.4lf", x1, x2);
+
+	return 0;
 }
 
 int quadsolve(double a, double b, double c, double *x1, double *x2)
@@ -41,22 +56,7 @@ int quadsolve(double a, double b, double c, double *x1, double *x2)
 	return -1;
 }
 
-int main() {
-	double a, b, c, x1, x2;
-
-	if (scanf("%lf %lf %lf", &a, &b, &c) < 3) {
-		printf("Произошла ошибка ввода!");
-		return -1;
-	}
-
-	int stat = quadsolve(a, b, c, &x1, &x2);
-
-	if (stat < 0)
-		printf("Решений не найдено.");
-	else if (stat == 0)
-		printf("Найдено 1 решение: %.4lf", x1);
-	else
-		printf("Найдено 2 решения: %.4lf %.4lf", x1, x2);
-
-	return 0;
+int isclose(double x, double y)
+{
+	return fabs(x - y) <= DBL_EPSILON;
 }

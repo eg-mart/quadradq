@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <math.h>
+#include <assert.h>
 
 enum solution_stat {
 	ERR,
@@ -54,9 +55,12 @@ int main() {
 
 enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2)
 {
-	if (!(isfinite(a) && isfinite(b) && isfinite(c) && x1 != NULL && x2 != NULL)) {
+	if (!(isfinite(a) && isfinite(b) && isfinite(c))) {
 		return ERR;
 	}
+
+	assert(x1 != NULL);
+	assert(x2 != NULL);
 	
 	if (almosteq(a, 0)) {
 		return linsolve(b, c, x1);
@@ -83,9 +87,11 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 
 enum solution_stat linsolve(double a, double b, double *x)
 {
-	if (!(isfinite(a) && isfinite(b) && x != NULL)) {
+	if (!(isfinite(a) && isfinite(b))) {
 		return ERR;
 	}
+
+	assert(x != NULL);
 
 	if (almosteq(a, 0)) {
 		if (almosteq(b, 0))

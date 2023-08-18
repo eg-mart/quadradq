@@ -2,6 +2,7 @@
 #include <float.h>
 #include <math.h>
 #include <assert.h>
+#include <stdlib.h>
 
 enum solution_stat {
 	ERR,
@@ -23,21 +24,24 @@ int main() {
 	double x1 = 0;
 	double x2 = 0;
 
-	char *buf[64];
-	if (fgets(buf, sizeof(buf), stdin) {
+	char buf[64];
+	if (fgets(buf, sizeof(buf), stdin)) {
 		int n = 0;
 		if (sscanf(buf, "%lf %lf %lf %n", &a, &b, &c, &n) != 3 || buf[n] != '\0') {
 			fprintf(stderr, "Произошла ошибка ввода");
+			exit(1);
 		}
 	} else {
 		fprintf(stderr, "Произошла ошибка ввода");
+		exit(1);
 	}
 
 	enum solution_stat stat = quadsolve(a, b, c, &x1, &x2);
 
 	switch (stat) {
 		case ERR:
-			printf("Произошла ошибка!");
+			fprintf(stderr, "Произошла ошибка");
+			exit(1);
 			break;
 		case NO_SOL:
 			printf("Решений не найдено.");
@@ -52,7 +56,8 @@ int main() {
 			printf("Найдено бесконечно много решений.");
 			break;
 		default:
-			printf("Произошла ошибка!");
+			fprintf(stderr, "Произошла ошибка!");
+			exit(1);
 	}
 
 	return 0;

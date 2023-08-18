@@ -53,7 +53,7 @@ int main() {
 
 enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2)
 {
-	if (!(isfinite(a) && isfinite(b) && isfinite(c))) {
+	if (!(isfinite(a) && isfinite(b) && isfinite(c) && x1 != NULL && x2 != NULL)) {
 		return ERR;
 	}
 	
@@ -79,7 +79,7 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 
 enum solution_stat linsolve(double a, double b, double *x)
 {
-	if (!(isfinite(a) && isfinite(b))) {
+	if (!(isfinite(a) && isfinite(b) && x != NULL)) {
 		return ERR;
 	}
 

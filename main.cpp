@@ -23,9 +23,14 @@ int main() {
 	double x1 = 0;
 	double x2 = 0;
 
-	if (scanf("%lf %lf %lf", &a, &b, &c) < 3) {
-		printf("Произошла ошибка ввода!");
-		return -1;
+	char *buf[64];
+	if (fgets(buf, sizeof(buf), stdin) {
+		int n = 0;
+		if (sscanf(buf, "%lf %lf %lf %n", &a, &b, &c, &n) != 3 || buf[n] != '\0') {
+			fprintf(stderr, "Произошла ошибка ввода");
+		}
+	} else {
+		fprintf(stderr, "Произошла ошибка ввода");
 	}
 
 	enum solution_stat stat = quadsolve(a, b, c, &x1, &x2);

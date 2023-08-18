@@ -6,7 +6,11 @@ int isclose(double x, double y);
 int quadsolve(double a, double b, double c, double *x1, double *x2);
 
 int main() {
-	double a, b, c, x1, x2;
+	double a = 0;
+	double b = 0;
+	double c = 0;
+	double x1 = 0;
+	double x2 = 0;
 
 	if (scanf("%lf %lf %lf", &a, &b, &c) < 3) {
 		printf("Произошла ошибка ввода!");

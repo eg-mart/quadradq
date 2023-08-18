@@ -10,7 +10,7 @@ enum solution_stat {
 	INF_SOL,
 };
 
-int isclose(double x, double y);
+int almosteq(double x, double y);
 enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2);
 enum solution_stat linsolve(double a, double b, double *x);
 double discrimcalc(double a, double b, double c);
@@ -58,7 +58,7 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 		return ERR;
 	}
 	
-	if (isclose(a, 0)) {
+	if (almosteq(a, 0)) {
 		return linsolve(b, c, x1);
 	}
 
@@ -87,8 +87,8 @@ enum solution_stat linsolve(double a, double b, double *x)
 		return ERR;
 	}
 
-	if (isclose(a, 0)) {
-		if (isclose(b, 0))
+	if (almosteq(a, 0)) {
+		if (almosteq(b, 0))
 			return INF_SOL;
 		else
 			return NO_SOL;
@@ -105,7 +105,7 @@ double discrimcalc(double a, double b, double c)
 	return b * b - 4 * a * c;
 }
 
-int isclose(double x, double y)
+int almosteq(double x, double y)
 {
 	return fabs(x - y) <= DBL_EPSILON;
 }

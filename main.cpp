@@ -12,6 +12,7 @@ enum solution_stat {
 
 int isclose(double x, double y);
 enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2);
+enum solution_stat linsolve(double a, double b, double *x);
 
 int main() {
 	double a = 0;
@@ -57,12 +58,7 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 	}
 	
 	if (isclose(a, 0)) {
-		if (isclose(b, 0)) {
-			return NO_SOL;
-		} else {
-			*x1 = -c / b;
-			return ONE_SOL;
-		}
+		return linsolve(b, c, x1);
 	}
 
 	double disc = b * b - 4 * a * c;
@@ -75,6 +71,25 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 		return NO_SOL;
 	} else {
 		*x1 = -b / (2 * a);
+		return ONE_SOL;
+	}
+
+	return ERR;
+}
+
+enum solution_stat linsolve(double a, double b, double *x)
+{
+	if (!(isfinite(a) && isfinite(b))) {
+		return ERR;
+	}
+
+	if (isclose(a, 0)) {
+		if (isclose(b, 0))
+			return INF_SOL;
+		else
+			return NO_SOL;
+	} else {
+		*x = -b / a;
 		return ONE_SOL;
 	}
 

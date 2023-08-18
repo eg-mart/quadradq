@@ -2,8 +2,16 @@
 #include <float.h>
 #include <math.h>
 
+enum solution_stat {
+	ERR,
+	NO_SOL,
+	ONE_SOL,
+	TWO_SOL,
+	INF_SOL,
+};
+
 int isclose(double x, double y);
-int quadsolve(double a, double b, double c, double *x1, double *x2);
+enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2);
 
 int main() {
 	double a = 0;
@@ -17,30 +25,43 @@ int main() {
 		return -1;
 	}
 
-	int stat = quadsolve(a, b, c, &x1, &x2);
+	enum solution_stat stat = quadsolve(a, b, c, &x1, &x2);
 
-	if (stat < 0)
-		printf("Решений не найдено.");
-	else if (stat == 0)
-		printf("Найдено 1 решение: %.4lf", x1);
-	else
-		printf("Найдено 2 решения: %.4lf %.4lf", x1, x2);
+	switch (stat) {
+		case ERR:
+			printf("Произошла ошибка!");
+			break;
+		case NO_SOL:
+			printf("Решений не найдено.");
+			break;
+		case ONE_SOL:
+			printf("Найдено 1 решение: %.4lf", x1);
+			break;
+		case TWO_SOL:
+			printf("Найдено 2 решения: %.4lf %.4lf", x1, x2);
+			break;
+		case INF_SOL:
+			printf("Найдено бесконечно много решений.");
+			break;
+		default:
+			printf("Произошла ошибка!");
+	}
 
 	return 0;
 }
 
-int quadsolve(double a, double b, double c, double *x1, double *x2)
+enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2)
 {
 	if (!(isfinite(a) && isfinite(b) && isfinite(c))) {
-		return -1;
+		return ERR;
 	}
 	
 	if (isclose(a, 0)) {
 		if (isclose(b, 0)) {
-			return -1;
+			return NO_SOL;
 		} else {
 			*x1 = -c / b;
-			return 0;
+			return ONE_SOL;
 		}
 	}
 
@@ -49,15 +70,15 @@ int quadsolve(double a, double b, double c, double *x1, double *x2)
 	if (disc > 0) {
 		*x1 = (-b - sqrt(disc)) / (2 * a);
 		*x2 = (-b + sqrt(disc)) / (2 * a);
-		return 1;
+		return TWO_SOL;
 	} else if (disc < 0) {
-		return -1;
+		return NO_SOL;
 	} else {
 		*x1 = -b / (2 * a);
-		return 0;
+		return ONE_SOL;
 	}
 
-	return -1;
+	return ERR;
 }
 
 int isclose(double x, double y)

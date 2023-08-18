@@ -13,6 +13,7 @@ enum solution_stat {
 int isclose(double x, double y);
 enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2);
 enum solution_stat linsolve(double a, double b, double *x);
+double discrimcalc(double a, double b, double c);
 
 int main() {
 	double a = 0;
@@ -61,16 +62,19 @@ enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x
 		return linsolve(b, c, x1);
 	}
 
-	double disc = b * b - 4 * a * c;
+	double discmnt = discrimcalc(a, b, c);
 
-	if (disc > 0) {
-		*x1 = (-b - sqrt(disc)) / (2 * a);
-		*x2 = (-b + sqrt(disc)) / (2 * a);
-		return TWO_SOL;
-	} else if (disc < 0) {
+	if (discmnt < 0) {
 		return NO_SOL;
 	} else {
-		*x1 = -b / (2 * a);
+		double sqrt_discmnt = sqrt(discmnt);
+		*x1 = (-b - sqrt_discmnt) / (2 * a);
+
+		if (discmnt > 0) {
+			*x2 = (-b + sqrt_discmnt) / (2 * a);
+			return TWO_SOL;
+		}
+
 		return ONE_SOL;
 	}
 
@@ -94,6 +98,11 @@ enum solution_stat linsolve(double a, double b, double *x)
 	}
 
 	return ERR;
+}
+
+double discrimcalc(double a, double b, double c)
+{
+	return b * b - 4 * a * c;
 }
 
 int isclose(double x, double y)

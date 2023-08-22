@@ -12,22 +12,32 @@ enum solution_stat {
 	INF_SOL,
 };
 
+struct coefficients {
+	double a;
+	double b;
+	double c;
+};
+
+struct roots {
+	double x1;
+	double x2;
+	int nroots;
+};
+
 int almosteq(double x, double y);
-enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2);
+enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots);
 enum solution_stat linsolve(double a, double b, double *x);
-double discrimcalc(double a, double b, double c);
+double discrimcalc(struct coefficients coeffs);
 
 int main() {
-	double a = 0;
-	double b = 0;
-	double c = 0;
-	double x1 = 0;
-	double x2 = 0;
+	struct coefficients coeffs = { NAN, NAN, NAN };
+	struct roots roots = { NAN, NAN, 0 };
 
 	char buf[64];
 	if (fgets(buf, sizeof(buf), stdin)) {
 		int n = 0;
-		if (sscanf(buf, "%lf %lf %lf %n", &a, &b, &c, &n) != 3 || buf[n] != '\0') {
+		if (sscanf(buf, "%lf %lf %lf %n", &coeffs.a, &coeffs.b, &coeffs.c, &n) != 3 ||
+				buf[n] != '\0') {
 			fprintf(stderr, "Произошла ошибка ввода");
 			exit(1);
 		}
@@ -36,7 +46,7 @@ int main() {
 		exit(1);
 	}
 
-	enum solution_stat stat = quadsolve(a, b, c, &x1, &x2);
+	enum solution_stat stat = quadsolve(coeffs, &roots);
 
 	switch (stat) {
 		case ERR:
@@ -47,10 +57,10 @@ int main() {
 			printf("Решений не найдено.");
 			break;
 		case ONE_SOL:
-			printf("Найдено 1 решение: %.4lf", x1);
+			printf("Найдено 1 решение: %.4lf", roots.x1);
 			break;
 		case TWO_SOL:
-			printf("Найдено 2 решения: %.4lf %.4lf", x1, x2);
+			printf("Найдено 2 решения: %.4lf %.4lf", roots.x1, roots.x2);
 			break;
 		case INF_SOL:
 			printf("Найдено бесконечно много решений.");
@@ -63,30 +73,28 @@ int main() {
 	return 0;
 }
 
-enum solution_stat quadsolve(double a, double b, double c, double *x1, double *x2)
+enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots)
 {
-	if (!(isfinite(a) && isfinite(b) && isfinite(c))) {
+	if (!(isfinite(coeffs.a) && isfinite(coeffs.b) && isfinite(coeffs.c))) {
 		return ERR;
 	}
 
-	assert(x1 != NULL);
-	assert(x2 != NULL);
-	assert(x1 != x2);
+	assert(roots != NULL);
 	
-	if (almosteq(a, 0)) {
-		return linsolve(b, c, x1);
+	if (almosteq(coeffs.a, 0)) {
+		return linsolve(coeffs.b, coeffs.c, &roots->x1);
 	}
 
-	double discmnt = discrimcalc(a, b, c);
+	double discmnt = discrimcalc(coeffs);
 
 	if (discmnt < 0) {
 		return NO_SOL;
 	} else {
 		double sqrt_discmnt = sqrt(discmnt);
-		*x1 = (-b - sqrt_discmnt) / (2 * a);
+		roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
 
 		if (discmnt > 0) {
-			*x2 = (-b + sqrt_discmnt) / (2 * a);
+			roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
 			return TWO_SOL;
 		}
 
@@ -117,9 +125,9 @@ enum solution_stat linsolve(double a, double b, double *x)
 	return ERR;
 }
 
-double discrimcalc(double a, double b, double c)
+double discrimcalc(struct coefficients coeffs)
 {
-	return b * b - 4 * a * c;
+	return coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 }
 
 int almosteq(double x, double y)

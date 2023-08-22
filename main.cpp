@@ -62,13 +62,13 @@ enum error handle_arguments(int argc, char *argv[], FILE **input, FILE **output)
 	if (argc == 1)
 		return ERR_NO_ARGS;
 
-	if (argc != 3)
+	if (argc != 3 && argc != 2)
 		return ERR_ARG_CNT;
 
 	if ((*input = fopen(argv[1], "r")) == NULL)
 		return ERR_FILE_OPEN;
 
-	if ((*output = fopen(argv[2], "w")) == NULL)
+	if (argc == 3 && (*output = fopen(argv[2], "w")) == NULL)
 		return ERR_FILE_OPEN;
 
 	return NORM;
@@ -101,7 +101,7 @@ void print_error(FILE *error, enum error err_code)
 			fprintf(error, "[ERROR] an unknown error occured\n");
 			break;
 		case ERR_ARG_CNT:
-			fprintf(error, "[ERROR] Wrong arguments. Usage: quadradq input output\n");
+			fprintf(error, "[ERROR] Wrong arguments. Usage: quadradq input [output]\n");
 			break;
 		default:
 			fprintf(error, "[ERROR] an unknown error occured\n");

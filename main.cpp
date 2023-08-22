@@ -126,10 +126,17 @@ void solve_linear(double a, double b, struct roots *roots)
 
 double calc_discrim(struct coefficients coeffs)
 {
+	assert(isfinite(coeffs.a));
+	assert(isfinite(coeffs.b));
+	assert(isfinite(coeffs.c));
+
 	return coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 }
 
 int is_equal(double x, double y)
 {
+	assert(isfinite(x));
+	assert(isfinite(y));
+
 	return fabs(x - y) <= DBL_EPSILON;
 }

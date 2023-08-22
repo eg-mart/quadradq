@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <math.h>
 #include "equation_solver.h"
 
@@ -9,26 +10,28 @@ enum error {
 	ERR_FILE_WRITE,
 	ERR_FORMAT,
 	ERR_BAD_DATA,
-	ERR_UNKNOWN
+	ERR_UNKNOWN,
+	ERR_ARG_CNT,
+	ERR_NO_ARGS
 };
 
 enum error input_coefficients(FILE *input, struct coefficients *coeffs);
 enum error output_roots(FILE *output, struct roots roots);
 void print_error(FILE *error, enum error err_code);
+enum error handle_arguments(int argc, char *argv[], FILE **input, FILE **output);
 
-int main() {
+int main(int argc, char *argv[]) {
 	struct coefficients coeffs = { NAN, NAN, NAN };
 	struct roots roots = { 0, 0, ZERO_ROOTS };
-	FILE *input, *output, *error;
+	FILE *input = stdin, *output = stdout;
 
-	if ((output = fopen("output.txt", "w")) == NULL) {
-		print_error(stderr, ERR_FILE_OPEN);
-		return 1;
-	}
-	error = output;
+	enum error arg_status = handle_arguments(argc, argv, &input, &output);
+	print_error(stderr, arg_status);
 
-	if ((input = fopen("input.txt", "r")) == NULL) {
-		print_error(stderr, ERR_FILE_OPEN);
+	if (arg_status == ERR_NO_ARGS) {
+		input = stdin;
+		output = stdout;
+	} else if (arg_status != NORM) {
 		return 1;
 	}
 
@@ -36,25 +39,51 @@ int main() {
 
 	while (input_status != FILE_ENDED) {
 		input_status = input_coefficients(input, &coeffs);
-		print_error(error, input_status);
+		print_error(output, input_status);
 
 		if (input_status == NORM) {
 			solve_quadratic(coeffs, &roots);
 
 			output_status = output_roots(output, roots);
-			print_error(error, output_status);
+			print_error(output, output_status);
 		}
 	}
 
 	return 0;
 }
 
+enum error handle_arguments(int argc, char *argv[], FILE **input, FILE **output)
+{
+	assert(input != NULL);
+	assert(output != NULL);
+	assert(argv != NULL);
+	assert(input != output);
+
+	if (argc == 1)
+		return ERR_NO_ARGS;
+
+	if (argc != 3)
+		return ERR_ARG_CNT;
+
+	if ((*input = fopen(argv[1], "r")) == NULL)
+		return ERR_FILE_OPEN;
+
+	if ((*output = fopen(argv[2], "w")) == NULL)
+		return ERR_FILE_OPEN;
+
+	return NORM;
+}
+
 void print_error(FILE *error, enum error err_code)
 {
+	assert(error != NULL);
+	
 	switch (err_code) {
 		case NORM:
 			return;
 		case FILE_ENDED:
+			return;
+		case ERR_NO_ARGS:
 			return;
 		case ERR_FILE_OPEN:
 			fprintf(error, "[ERROR] error opening a file\n");
@@ -71,6 +100,9 @@ void print_error(FILE *error, enum error err_code)
 		case ERR_UNKNOWN:
 			fprintf(error, "[ERROR] an unknown error occured\n");
 			break;
+		case ERR_ARG_CNT:
+			fprintf(error, "[ERROR] Wrong arguments. Usage: quadradq input output\n");
+			break;
 		default:
 			fprintf(error, "[ERROR] an unknown error occured\n");
 	}
@@ -83,6 +115,8 @@ void print_error(FILE *error, enum error err_code)
 
 enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 {
+	assert(input != NULL);
+	
 	int scanned = fscanf(input, "%lf %lf %lf", &coeffs->a, &coeffs->b, &coeffs->c);
 
 	int tmp = 0;
@@ -107,6 +141,8 @@ enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 
 enum error output_roots(FILE *output, struct roots roots)
 {
+	assert(output != NULL);
+
 	if (is_equal(roots.x1, 0))
 		roots.x1 = 0;
 

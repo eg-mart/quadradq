@@ -18,7 +18,7 @@ void print_error(FILE *error, enum error err_code);
 
 int main() {
 	struct coefficients coeffs = { NAN, NAN, NAN };
-	struct roots roots = { NAN, NAN, 0 };
+	struct roots roots = { 0, 0, 0 };
 	FILE *input, *output, *error;
 
 	if ((output = fopen("output.txt", "a")) == NULL) {
@@ -107,6 +107,12 @@ enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 
 enum error output_roots(FILE *output, struct roots roots)
 {
+	if (is_equal(roots.x1, 0))
+		roots.x1 = 0;
+
+	if (is_equal(roots.x2, 0))
+		roots.x2 = 0;
+	
 	switch (roots.n) {
 		case 0:
 			fprintf(output, "no roots\n");

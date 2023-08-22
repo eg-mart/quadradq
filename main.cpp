@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <float.h>
 #include <math.h>
-#include <assert.h>
-#include <stdlib.h>
+#include "equation_solver.h"
 
 enum error {
 	NORM,
@@ -13,24 +11,6 @@ enum error {
 	ERR_UNKNOWN
 };
 	
-struct coefficients {
-	double a;
-	double b;
-	double c;
-};
-
-const int INF_ROOTS = -1;
-
-struct roots {
-	double x1;
-	double x2;
-	int n;
-};
-
-int is_equal(double x, double y);
-void solve_quadratic(struct coefficients coeffs, struct roots *roots);
-void solve_linear(double a, double b, struct roots *roots);
-double calc_discrim(struct coefficients coeffs);
 enum error input_coefficients(FILE *input, struct coefficients *coeffs);
 enum error output_roots(FILE *output, struct roots roots);
 int print_error(FILE *error, enum error err_code);
@@ -99,18 +79,21 @@ int print_error(FILE *error, enum error err_code)
 
 enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 {
-	int scanned = fscanf(input, "%lf %lf %lf ", &coeffs->a, &coeffs->b, &coeffs->c);
+	int scanned = fscanf(input, "%lf %lf %lf", &coeffs->a, &coeffs->b, &coeffs->c);
 
-	int tmp = '\n';
-	if (scanned != 3 && scanned != EOF) {
-		while ((tmp = getc(input)) != '\n' && tmp != EOF)
-			;
+	int tmp;
+	int format_error = 0;
+
+	while ((tmp = getc(input)) != '\n' && tmp != EOF) {
+		if (tmp != ' ')
+			format_error = 1;
+	}
+
+	if ((scanned != 3 && scanned != EOF) || format_error)
 		return ERR_FORMAT;
-	}
 
-	if (scanned == EOF || tmp == EOF) {
+	if (scanned == EOF || tmp == EOF)
 		return FILE_ENDED;
-	}
 
 	return NORM;
 }
@@ -138,74 +121,4 @@ enum error output_roots(FILE *output, struct roots roots)
 		return ERR_FILE_WRITE;
 
 	return NORM;
-}
-
-void solve_quadratic(struct coefficients coeffs, struct roots *roots)
-{
-	assert(isfinite(coeffs.a));
-	assert(isfinite(coeffs.b));
-	assert(isfinite(coeffs.c));
-	assert(roots != NULL);
-	
-	if (is_equal(coeffs.a, 0)) {
-		solve_linear(coeffs.b, coeffs.c, roots);
-		return;
-	}
-
-	double discmnt = calc_discrim(coeffs);
-
-	if (discmnt < 0) {
-		roots->n = 0;
-		return;
-	}
-
-	double sqrt_discmnt = sqrt(discmnt);
-	roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
-
-	if (discmnt > 0) {
-		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
-		roots->n = 2;
-		return;
-	}
-
-	roots->n = 1;
-	return;
-}
-
-void solve_linear(double a, double b, struct roots *roots)
-{
-	assert(isfinite(a));
-	assert(isfinite(b));
-	assert(roots != NULL);
-
-	if (is_equal(a, 0)) {
-		if (is_equal(b, 0)) {
-			roots->n = INF_ROOTS;
-			return;
-		}
-		roots->n = 0;
-		return;
-	}
-
-	roots->n = 1;
-	roots->x1 = -b / a;
-
-	return;
-}
-
-double calc_discrim(struct coefficients coeffs)
-{
-	assert(isfinite(coeffs.a));
-	assert(isfinite(coeffs.b));
-	assert(isfinite(coeffs.c));
-
-	return coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
-}
-
-int is_equal(double x, double y)
-{
-	assert(isfinite(x));
-	assert(isfinite(y));
-
-	return fabs(x - y) <= DBL_EPSILON;
 }

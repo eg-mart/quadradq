@@ -8,12 +8,13 @@ enum error {
 	ERR_FILE_OPEN,
 	ERR_FILE_WRITE,
 	ERR_FORMAT,
+	ERR_BAD_DATA,
 	ERR_UNKNOWN
 };
 	
 enum error input_coefficients(FILE *input, struct coefficients *coeffs);
 enum error output_roots(FILE *output, struct roots roots);
-int print_error(FILE *error, enum error err_code);
+void print_error(FILE *error, enum error err_code);
 
 int main() {
 	struct coefficients coeffs = { NAN, NAN, NAN };
@@ -48,13 +49,13 @@ int main() {
 	return 0;
 }
 
-int print_error(FILE *error, enum error err_code)
+void print_error(FILE *error, enum error err_code)
 {
 	switch (err_code) {
 		case NORM:
-			return 0;
+			return;
 		case FILE_ENDED:
-			return 0;
+			return;
 		case ERR_FILE_OPEN:
 			fprintf(error, "[ERROR] error opening a file\n");
 			break;
@@ -63,6 +64,9 @@ int print_error(FILE *error, enum error err_code)
 			break;
 		case ERR_FORMAT:
 			fprintf(error, "[ERROR] wrong input format\n");
+			break;
+		case ERR_BAD_DATA:
+			fprintf(error, "[ERROR] bad input data\n");
 			break;
 		case ERR_UNKNOWN:
 			fprintf(error, "[ERROR] an unknown error occured\n");
@@ -74,7 +78,7 @@ int print_error(FILE *error, enum error err_code)
 	if (ferror(error))
 		fprintf(stderr, "[ERROR] error writing to an error file\n");
 
-	return 1;
+	return;
 }
 
 enum error input_coefficients(FILE *input, struct coefficients *coeffs)
@@ -94,6 +98,9 @@ enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 
 	if (scanned == EOF || tmp == EOF)
 		return FILE_ENDED;
+
+	if (!(isfinite(coeffs->a) && isfinite(coeffs->b) && isfinite(coeffs->c)))
+		return ERR_BAD_DATA;
 
 	return NORM;
 }

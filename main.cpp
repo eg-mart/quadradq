@@ -24,10 +24,10 @@ struct roots {
 	int nroots;
 };
 
-int almosteq(double x, double y);
-enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots);
-enum solution_stat linsolve(double a, double b, double *x);
-double discrimcalc(struct coefficients coeffs);
+int is_equal(double x, double y);
+enum solution_stat solve_quadratic(struct coefficients coeffs, struct roots *roots);
+enum solution_stat solve_linear(double a, double b, double *x);
+double calc_discrim(struct coefficients coeffs);
 
 int main() {
 	struct coefficients coeffs = { NAN, NAN, NAN };
@@ -46,7 +46,7 @@ int main() {
 		exit(1);
 	}
 
-	enum solution_stat stat = quadsolve(coeffs, &roots);
+	enum solution_stat stat = solve_quadratic(coeffs, &roots);
 
 	switch (stat) {
 		case ERR:
@@ -73,7 +73,7 @@ int main() {
 	return 0;
 }
 
-enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots)
+enum solution_stat solve_quadratic(struct coefficients coeffs, struct roots *roots)
 {
 	if (!(isfinite(coeffs.a) && isfinite(coeffs.b) && isfinite(coeffs.c))) {
 		return ERR;
@@ -81,11 +81,11 @@ enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots)
 
 	assert(roots != NULL);
 	
-	if (almosteq(coeffs.a, 0)) {
-		return linsolve(coeffs.b, coeffs.c, &roots->x1);
+	if (is_equal(coeffs.a, 0)) {
+		return solve_linear(coeffs.b, coeffs.c, &roots->x1);
 	}
 
-	double discmnt = discrimcalc(coeffs);
+	double discmnt = calc_discrim(coeffs);
 
 	if (discmnt < 0) {
 		return NO_SOL;
@@ -104,7 +104,7 @@ enum solution_stat quadsolve(struct coefficients coeffs, struct roots *roots)
 	return ERR;
 }
 
-enum solution_stat linsolve(double a, double b, double *x)
+enum solution_stat solve_linear(double a, double b, double *x)
 {
 	if (!(isfinite(a) && isfinite(b))) {
 		return ERR;
@@ -112,8 +112,8 @@ enum solution_stat linsolve(double a, double b, double *x)
 
 	assert(x != NULL);
 
-	if (almosteq(a, 0)) {
-		if (almosteq(b, 0))
+	if (is_equal(a, 0)) {
+		if (is_equal(b, 0))
 			return INF_SOL;
 		else
 			return NO_SOL;
@@ -125,12 +125,12 @@ enum solution_stat linsolve(double a, double b, double *x)
 	return ERR;
 }
 
-double discrimcalc(struct coefficients coeffs)
+double calc_discrim(struct coefficients coeffs)
 {
 	return coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 }
 
-int almosteq(double x, double y)
+int is_equal(double x, double y)
 {
 	return fabs(x - y) <= DBL_EPSILON;
 }

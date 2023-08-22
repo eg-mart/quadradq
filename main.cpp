@@ -18,15 +18,17 @@ struct coefficients {
 	double c;
 };
 
+const int INF_ROOTS = -1;
+
 struct roots {
 	double x1;
 	double x2;
-	int nroots;
+	int n;
 };
 
 int is_equal(double x, double y);
-enum solution_stat solve_quadratic(struct coefficients coeffs, struct roots *roots);
-enum solution_stat solve_linear(double a, double b, double *x);
+void solve_quadratic(struct coefficients coeffs, struct roots *roots);
+void solve_linear(double a, double b, struct roots *roots);
 double calc_discrim(struct coefficients coeffs);
 
 int main() {
@@ -46,23 +48,19 @@ int main() {
 		exit(1);
 	}
 
-	enum solution_stat stat = solve_quadratic(coeffs, &roots);
+	solve_quadratic(coeffs, &roots);
 
-	switch (stat) {
-		case ERR:
-			fprintf(stderr, "Произошла ошибка");
-			exit(1);
-			break;
-		case NO_SOL:
+	switch (roots.n) {
+		case 0:
 			printf("Решений не найдено.");
 			break;
-		case ONE_SOL:
+		case 1:
 			printf("Найдено 1 решение: %.4lf", roots.x1);
 			break;
-		case TWO_SOL:
+		case 2:
 			printf("Найдено 2 решения: %.4lf %.4lf", roots.x1, roots.x2);
 			break;
-		case INF_SOL:
+		case INF_ROOTS:
 			printf("Найдено бесконечно много решений.");
 			break;
 		default:
@@ -73,56 +71,57 @@ int main() {
 	return 0;
 }
 
-enum solution_stat solve_quadratic(struct coefficients coeffs, struct roots *roots)
+void solve_quadratic(struct coefficients coeffs, struct roots *roots)
 {
-	if (!(isfinite(coeffs.a) && isfinite(coeffs.b) && isfinite(coeffs.c))) {
-		return ERR;
-	}
-
+	assert(isfinite(coeffs.a));
+	assert(isfinite(coeffs.b));
+	assert(isfinite(coeffs.c));
 	assert(roots != NULL);
 	
 	if (is_equal(coeffs.a, 0)) {
-		return solve_linear(coeffs.b, coeffs.c, &roots->x1);
+		solve_linear(coeffs.b, coeffs.c, roots);
+		return;
 	}
 
 	double discmnt = calc_discrim(coeffs);
 
 	if (discmnt < 0) {
-		return NO_SOL;
-	} else {
-		double sqrt_discmnt = sqrt(discmnt);
-		roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
-
-		if (discmnt > 0) {
-			roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
-			return TWO_SOL;
-		}
-
-		return ONE_SOL;
+		roots->n = 0;
+		return;
 	}
 
-	return ERR;
+	double sqrt_discmnt = sqrt(discmnt);
+	roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
+
+	if (discmnt > 0) {
+		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
+		roots->n = 2;
+		return;
+	}
+
+	roots->n = 1;
+	return;
 }
 
-enum solution_stat solve_linear(double a, double b, double *x)
+void solve_linear(double a, double b, struct roots *roots)
 {
-	if (!(isfinite(a) && isfinite(b))) {
-		return ERR;
-	}
-
-	assert(x != NULL);
+	assert(isfinite(a));
+	assert(isfinite(b));
+	assert(roots != NULL);
 
 	if (is_equal(a, 0)) {
-		if (is_equal(b, 0))
-			return INF_SOL;
-		else
-			return NO_SOL;
-	} else {
-		*x = -b / a;
-		return ONE_SOL;
+		if (is_equal(b, 0)) {
+			roots->n = INF_ROOTS;
+			return;
+		}
+		roots->n = 0;
+		return;
 	}
 
-	return ERR;
+	roots->n = 1;
+	roots->x1 = -b / a;
+
+	return;
 }
 
 double calc_discrim(struct coefficients coeffs)

@@ -1,4 +1,9 @@
-const int INF_ROOTS = -1;
+enum nroots {
+	ZERO_ROOTS,
+	ONE_ROOT,
+	TWO_ROOTS,
+	INF_ROOTS
+};
 
 struct coefficients {
 	double a;
@@ -9,7 +14,7 @@ struct coefficients {
 struct roots {
 	double x1;
 	double x2;
-	int n;
+	enum nroots n;
 };
 
 int is_equal(double x, double y);

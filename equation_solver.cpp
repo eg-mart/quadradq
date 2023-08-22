@@ -18,7 +18,7 @@ void solve_quadratic(struct coefficients coeffs, struct roots *roots)
 	double discmnt = calc_discrim(coeffs);
 
 	if (discmnt < 0) {
-		roots->n = 0;
+		roots->n = ZERO_ROOTS;
 		return;
 	}
 
@@ -27,11 +27,11 @@ void solve_quadratic(struct coefficients coeffs, struct roots *roots)
 
 	if (discmnt > 0) {
 		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
-		roots->n = 2;
+		roots->n = TWO_ROOTS;
 		return;
 	}
 
-	roots->n = 1;
+	roots->n = ONE_ROOT;
 	return;
 }
 
@@ -46,11 +46,11 @@ void solve_linear(double a, double b, struct roots *roots)
 			roots->n = INF_ROOTS;
 			return;
 		}
-		roots->n = 0;
+		roots->n = ZERO_ROOTS;
 		return;
 	}
 
-	roots->n = 1;
+	roots->n = ONE_ROOT;
 	roots->x1 = -b / a;
 
 	return;

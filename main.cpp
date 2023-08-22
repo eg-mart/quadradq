@@ -11,17 +11,17 @@ enum error {
 	ERR_BAD_DATA,
 	ERR_UNKNOWN
 };
-	
+
 enum error input_coefficients(FILE *input, struct coefficients *coeffs);
 enum error output_roots(FILE *output, struct roots roots);
 void print_error(FILE *error, enum error err_code);
 
 int main() {
 	struct coefficients coeffs = { NAN, NAN, NAN };
-	struct roots roots = { 0, 0, 0 };
+	struct roots roots = { 0, 0, ZERO_ROOTS };
 	FILE *input, *output, *error;
 
-	if ((output = fopen("output.txt", "a")) == NULL) {
+	if ((output = fopen("output.txt", "w")) == NULL) {
 		print_error(stderr, ERR_FILE_OPEN);
 		return 1;
 	}
@@ -85,7 +85,7 @@ enum error input_coefficients(FILE *input, struct coefficients *coeffs)
 {
 	int scanned = fscanf(input, "%lf %lf %lf", &coeffs->a, &coeffs->b, &coeffs->c);
 
-	int tmp;
+	int tmp = 0;
 	int format_error = 0;
 
 	while ((tmp = getc(input)) != '\n' && tmp != EOF) {
@@ -112,7 +112,7 @@ enum error output_roots(FILE *output, struct roots roots)
 
 	if (is_equal(roots.x2, 0))
 		roots.x2 = 0;
-	
+
 	switch (roots.n) {
 		case 0:
 			fprintf(output, "no roots\n");
@@ -129,7 +129,7 @@ enum error output_roots(FILE *output, struct roots roots)
 		default:
 			return ERR_UNKNOWN;
 	}
-	
+
 	if (ferror(output))
 		return ERR_FILE_WRITE;
 

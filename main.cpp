@@ -19,9 +19,47 @@ enum error {
 	ERR_NO_ARGS
 };
 
+/**
+* Reads coefficients from a file. Returns error in case of a wrong data format,
+* returns FILE_ENDED when EOF is encountered
+*
+* @param [in]  input  pointer to the input file (can't be NULL)
+* @param [out] coeffs pointer to a struct with a, b, c coefficients (can't be NULL)
+*
+* @return NORM if no errors were encountered, error code otherwise
+*/
 enum error input_coefficients(FILE *input, struct coefficients *coeffs);
+
+/**
+* Writes roots to a file. Returns error in case writing failed.
+*
+* @param [out] output pointer to the output file
+* @param [in]  roots  a struct containing x1, x2 roots
+*
+* @return NORM if no errors were encountered, error code otherwise
+*/
 enum error output_roots(FILE *output, struct roots roots);
+
+/**
+* Writes a message corresponding to the error code to the error file.
+*
+* @param [out] error    the output file
+* @param [in]  err_code an error code from the error enum
+*/
 void print_error(FILE *error, enum error err_code);
+
+/**
+* Reads two filenames from command arguments and opens them. If only one filename was
+* provided, opens the file as input and leaves the output as is. Returns errors in case
+* of wrong number of arguments or if opening a file failed.
+*
+* @param [in]  argc   the number of arguments
+* @param [in]  argv   array of pointers to arguments
+* @param [out] input  pointer to a pointer to the input file
+* @param [out] output pointer to a [ointer to the output file
+*
+* @return NORM if no errors were encountered, error code otherwise
+*/
 enum error handle_arguments(int argc, char *argv[], FILE **input, FILE **output);
 
 int main(int argc, char *argv[]) {

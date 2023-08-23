@@ -1,9 +1,8 @@
 #include "equation_solver.h"
-#include <math.h>
-#include <assert.h>
-#include <float.h>
 
-void solve_quadratic(struct coefficients coeffs, struct roots *roots)
+const double PRECISION = 1e-6;
+
+void solve_quadratic(struct Coefficients coeffs, struct Roots_info *roots)
 {
 	assert(isfinite(coeffs.a));
 	assert(isfinite(coeffs.b));
@@ -24,9 +23,11 @@ void solve_quadratic(struct coefficients coeffs, struct roots *roots)
 
 	double sqrt_discmnt = sqrt(discmnt);
 	roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
+	roots->x1 = round(roots->x1 / PRECISION) * PRECISION;
 
 	if (discmnt > 0) {
 		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
+		roots->x2 = round(roots->x1 / PRECISION) * PRECISION;
 		roots->n = TWO_ROOTS;
 		return;
 	}
@@ -35,7 +36,7 @@ void solve_quadratic(struct coefficients coeffs, struct roots *roots)
 	return;
 }
 
-void solve_linear(double a, double b, struct roots *roots)
+void solve_linear(double a, double b, struct Roots_info *roots)
 {
 	assert(isfinite(a));
 	assert(isfinite(b));
@@ -52,11 +53,12 @@ void solve_linear(double a, double b, struct roots *roots)
 
 	roots->n = ONE_ROOT;
 	roots->x1 = -b / a;
+	roots->x1 = round(roots->x1 / PRECISION) * PRECISION;
 
 	return;
 }
 
-double calc_discrim(struct coefficients coeffs)
+double calc_discrim(struct Coefficients coeffs)
 {
 	assert(isfinite(coeffs.a));
 	assert(isfinite(coeffs.b));
@@ -70,5 +72,5 @@ int is_equal(double x, double y)
 	assert(isfinite(x));
 	assert(isfinite(y));
 
-	return fabs(x - y) <= DBL_EPSILON;
+	return fabs(x - y) <= PRECISION;
 }

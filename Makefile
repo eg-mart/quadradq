@@ -8,7 +8,7 @@ OBJS = equation_solver.o main.o
 
 testing : CFLAGS += -DTEST
 testing : OBJS += test.o
-testing : quadradq
+testing : test.o quadradq
 
 quadradq : $(OBJS)
 	$(CC) $(CFLAGS) -o quadradq $(OBJS)
@@ -24,3 +24,7 @@ test.o : tests/test.cpp tests/test.h
 
 clean :
 	rm quadradq main.o equation_solver.o test.o
+
+html : docs/html/index.html
+docs/html/index.html : main.cpp equation_solver.cpp equation_solver.h tests/test.cpp tests/test.h Doxyfile
+	doxygen

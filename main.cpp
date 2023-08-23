@@ -3,6 +3,10 @@
 #include <math.h>
 #include "equation_solver.h"
 
+#ifdef TEST
+#include "tests/test.h"
+#endif
+
 enum error {
 	NORM,
 	FILE_ENDED,
@@ -23,6 +27,12 @@ enum error handle_arguments(int argc, char *argv[], FILE **input, FILE **output)
 int main(int argc, char *argv[]) {
 	struct coefficients coeffs = { NAN, NAN, NAN };
 	struct roots roots = { 0, 0, ZERO_ROOTS };
+
+	#ifdef TEST
+	run_tests();
+	return 0;
+	#endif
+
 	FILE *input = stdin, *output = stdout;
 
 	enum error arg_status = handle_arguments(argc, argv, &input, &output);

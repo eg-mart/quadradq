@@ -13,11 +13,11 @@ int main(int argc, char *argv[]) {
 	struct Coefficients coeffs = { NAN, NAN, NAN };
 	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
 
-	bool test_mode = false;
-	handle_arguments(argc, argv, &test_mode);
+	struct Flags flags = { false, false };
+	handle_arguments(argc, argv, &flags);
 
 	#ifdef TEST
-	if (test_mode) {
+	if (flags.test_mode) {
 		run_tests();
 		return 0;
 	}

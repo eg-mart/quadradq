@@ -19,6 +19,11 @@ enum IO_error {
 	ERR_NO_ARGS
 };
 
+struct Flags {
+	bool test_mode;
+	bool use_complex;
+};
+
 /**
 * Reads coefficients from a file. Returns error in case of a wrong data format,
 * returns FILE_ENDED when EOF is encountered
@@ -55,6 +60,6 @@ void log_error(enum IO_error err_code);
 * @param [in]  argv      array of pointers to arguments
 * @param [out] test_mode pointer to a testing mode flag
 */
-void handle_arguments(int argc, char *argv[], bool *test_mode);
+void handle_arguments(int argc, char *argv[], struct Flags *flags);
 
 #endif

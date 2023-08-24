@@ -2,7 +2,7 @@
 #define EQUATION_SOLVER
 
 #include <math.h>
-#include <assert.h>
+#include "assert.h"
 #include <float.h>
 
 enum Num_roots {

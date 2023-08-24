@@ -1,8 +1,6 @@
 #include "test.h"
 #include "../colors.h"
 
-const int NUM_TESTS = 5;
-
 struct Test_case {
 	Coefficients coeffs;
 	Roots_info roots;
@@ -21,7 +19,8 @@ void test_quadratic(int test_num, const struct Test_case *test);
 void run_tests() {
 	printf("testing...\n");
 
-	for (int i = 0; i < NUM_TESTS; i++)
+	int num_tests = sizeof(tests) / sizeof(Test_case);
+	for (int i = 0; i < num_tests; i++)
 		test_quadratic(i + 1, &tests[i]);
 }
 

@@ -1,4 +1,5 @@
 #include "io_handling.h"
+#include "logger.h"
 
 void handle_arguments(int argc, char *argv[], bool *test_mode)
 {
@@ -15,44 +16,37 @@ void handle_arguments(int argc, char *argv[], bool *test_mode)
 	#endif
 }
 
-void print_error(FILE *error, enum error err_code)
+void log_error(enum IO_error err_code)
 {
-	assert(error != NULL);
-	
 	switch (err_code) {
-		case NO_ERR:
+		case NO_IO_ERR:
 			return;
 		case FILE_ENDED:
 			return;
 		case ERR_NO_ARGS:
 			return;
 		case ERR_FILE_OPEN:
-			fprintf(error, "[ERROR] error opening a file\n");
+			log_message(ERROR, "error opening a file\n");
 			break;
 		case ERR_FILE_WRITE:
-			fprintf(error, "[ERROR] error writing to a file\n");
+			log_message(ERROR, "error writing to a file\n");
 			break;
 		case ERR_FORMAT:
-			fprintf(error, "[ERROR] wrong input format\n");
+			log_message(WARN, "wrong input format\n");
 			break;
 		case ERR_BAD_DATA:
-			fprintf(error, "[ERROR] bad input data\n");
+			log_message(WARN, "bad input data\n");
 			break;
 		case ERR_ARG_CNT:
-			fprintf(error, "[ERROR] Wrong arguments. Usage: quadradq input [output]\n");
+			log_message(ERROR, "Wrong arguments. Usage: quadradq input [output]\n");
 			break;
 		case ERR_UNKNOWN:
 		default:
-			fprintf(error, "[ERROR] an unknown error occured\n");
+			log_message(ERROR, "[ERROR] an unknown error occured\n");
 	}
-
-	if (ferror(error))
-		fprintf(stderr, "[ERROR] error writing to an error file\n");
-
-	return;
 }
 
-enum error input_coefficients(FILE *input, struct Coefficients *coeffs)
+enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs)
 {
 	assert(input != NULL);
 	assert(coeffs != NULL);
@@ -76,12 +70,13 @@ enum error input_coefficients(FILE *input, struct Coefficients *coeffs)
 	if (!(isfinite(coeffs->a) && isfinite(coeffs->b) && isfinite(coeffs->c)))
 		return ERR_BAD_DATA;
 
-	return NO_ERR;
+	return NO_IO_ERR;
 }
 
-enum error output_roots(FILE *output, struct Roots_info roots)
+enum IO_error output_roots(FILE *output, struct Roots_info roots)
 {
 	assert(output != NULL);
+	assert(0 == 1);
 
 	if (isfinite(roots.x1) && is_equal(roots.x1, 0))
 		roots.x1 = 0;
@@ -109,5 +104,5 @@ enum error output_roots(FILE *output, struct Roots_info roots)
 	if (ferror(output))
 		return ERR_FILE_WRITE;
 
-	return NO_ERR;
+	return NO_IO_ERR;
 }

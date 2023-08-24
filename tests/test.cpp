@@ -1,6 +1,7 @@
 #include "test.h"
+#include "../colors.h"
 
-const int NUM_TESTS = 4;
+const int NUM_TESTS = 5;
 
 struct Test_case {
 	Coefficients coeffs;
@@ -12,6 +13,7 @@ struct Test_case tests[] = {
 	{ { 0, 0,  0 }, {  0, 0, INF_ROOTS  } },
 	{ { 1, 0, -4 }, { -2, 2, TWO_ROOTS  } },
 	{ { 1, 1,  1 }, {  0, 0, ZERO_ROOTS } },
+	{ { 1, 1,  1 }, {  0, 0, ONE_ROOT   } },
 };
 
 void test_quadratic(int test_num, const struct Test_case *test);
@@ -30,11 +32,12 @@ void test_quadratic(int test_num, const struct Test_case *test)
 
 	if (!(is_equal(test->roots.x1, roots.x1) && is_equal(test->roots.x2, roots.x2) &&
 			 is_equal(test->roots.n, roots.n))) {
-		printf("test %d FAILED: x1=%lf, x2=%lf, nroots=%d,\n"
-				"expected: x1=%lf, x2=%lf, nroots=%d\n", test_num, roots.x1, roots.x2,
-				roots.n, test->roots.x1, test->roots.x2, test->roots.n);
+		printf("%stest %d FAILED:%s x1=%lf, x2=%lf, nroots=%d,\n"
+				"expected: x1=%lf, x2=%lf, nroots=%d\n", RED, test_num, RESET_COLOR,
+				roots.x1, roots.x2, roots.n, test->roots.x1, 
+				test->roots.x2, test->roots.n);
 		return;
 	}
 
-	printf("test %d OK\n", test_num);
+	printf("%stest %d OK%s\n", GREEN, test_num, RESET_COLOR);
 }

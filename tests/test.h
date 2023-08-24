@@ -2,7 +2,7 @@
 #define TESTS
 
 #include <stdio.h>
-#include "../equation_solver.h"
+#include "../src/equation_solver.h"
 
 void run_tests();
 

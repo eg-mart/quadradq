@@ -1,7 +1,7 @@
 #ifndef IO_HANDLING
 #define IO_HANDLING
 
-#include <assert.h>
+#include "assert.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -17,6 +17,11 @@ enum IO_error {
 	ERR_UNKNOWN,
 	ERR_ARG_CNT,
 	ERR_NO_ARGS
+};
+
+struct Flags {
+	bool test_mode;
+	bool use_complex;
 };
 
 /**
@@ -55,6 +60,6 @@ void log_error(enum IO_error err_code);
 * @param [in]  argv      array of pointers to arguments
 * @param [out] test_mode pointer to a testing mode flag
 */
-void handle_arguments(int argc, char *argv[], bool *test_mode);
+void handle_arguments(int argc, char *argv[], struct Flags *flags);
 
 #endif

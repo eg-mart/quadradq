@@ -17,7 +17,7 @@ CC = g++
 
 all : quadradq
 
-OBJS = equation_solver.o main.o io_handling.o
+OBJS = equation_solver.o main.o io_handling.o logger.o
 
 testing : CFLAGS += -DTEST
 testing : OBJS += test.o
@@ -26,7 +26,7 @@ testing : test.o quadradq
 quadradq : $(OBJS)
 	$(CC) $(CFLAGS) -o quadradq $(OBJS)
 
-main.o : main.cpp equation_solver.h tests/test.h io_handling.h
+main.o : main.cpp equation_solver.h tests/test.h io_handling.h logger.h
 	$(CC) $(CFLAGS) -c main.cpp
 
 equation_solver.o : equation_solver.cpp equation_solver.h
@@ -37,6 +37,9 @@ test.o : tests/test.cpp tests/test.h
 
 io_handling.o : io_handling.cpp io_handling.h
 	$(CC) $(CFLAGS) -c io_handling.cpp
+
+logger.o : logger.cpp logger.h
+	$(CC) $(CFLAGS) -c logger.cpp
 
 clean :
 	rm quadradq $(OBJS) test.o

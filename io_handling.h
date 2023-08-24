@@ -1,14 +1,14 @@
 #ifndef IO_HANDLING
 #define IO_HANDLING
 
-#include <assert.h>
+#include "assert.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 #include "equation_solver.h"
 
-enum error {
-	NO_ERR,
+enum IO_error {
+	NO_IO_ERR,
 	FILE_ENDED,
 	ERR_FILE_OPEN,
 	ERR_FILE_WRITE,
@@ -26,9 +26,9 @@ enum error {
 * @param [in]  input  pointer to the input file (can't be NULL)
 * @param [out] coeffs pointer to a struct with a, b, c coefficients (can't be NULL)
 *
-* @return NO_ERR if no errors were encountered, error code otherwise
+* @return NO_IO_ERR if no errors were encountered, error code otherwise
 */
-enum error input_coefficients(FILE *input, struct Coefficients *coeffs);
+enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs);
 
 /**
 * Writes roots to a file. Returns error in case writing failed.
@@ -36,9 +36,9 @@ enum error input_coefficients(FILE *input, struct Coefficients *coeffs);
 * @param [out] output pointer to the output file
 * @param [in]  roots  a struct containing x1, x2 roots
 *
-* @return NO_ERR if no errors were encountered, error code otherwise
+* @return NO_IO_ERR if no errors were encountered, error code otherwise
 */
-enum error output_roots(FILE *output, struct Roots_info roots);
+enum IO_error output_roots(FILE *output, struct Roots_info roots);
 
 /**
 * Writes a message corresponding to the error code to the error file.
@@ -46,7 +46,7 @@ enum error output_roots(FILE *output, struct Roots_info roots);
 * @param [out] error    the output file
 * @param [in]  err_code an error code from the error enum
 */
-void print_error(FILE *error, enum error err_code);
+void log_error(enum IO_error err_code);
 
 /**
 * Parses command line arguments for the testing mode flag

@@ -1,11 +1,15 @@
 #include "equation_solver.h"
 #include "io_handling.h"
+#include "logger.h"
 
 #ifdef TEST
 #include "tests/test.h"
 #endif
 
 int main(int argc, char *argv[]) {
+	init_logger();
+	add_log_handler({ stderr, DEBUG, true });
+	
 	struct Coefficients coeffs = { NAN, NAN, NAN };
 	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
 
@@ -22,34 +26,42 @@ int main(int argc, char *argv[]) {
 	FILE *input = stdin, *output = stdout;
 
 	if (argc > 3) {
-		print_error(stderr, ERR_ARG_CNT);
+		log_error(ERR_ARG_CNT);
+		close_logger();
 		return 1;
 	} else if (argc > 1) {
 		if ((input = fopen(argv[1], "r")) == NULL) {
-			print_error(stderr, ERR_FILE_OPEN);
+			log_error(ERR_FILE_OPEN);
+			close_logger();
 			return 1;
 		}
 
 		if (argc == 3 && (output = fopen(argv[2], "w")) == NULL) {
-			print_error(stderr, ERR_FILE_OPEN);
+			log_error(ERR_FILE_OPEN);
+			close_logger();
 			return 1;
 		}
 	}
 
-	enum error input_status = NO_ERR, output_status = NO_ERR;
+	if (output != stdout)
+		add_log_handler({ output, WARN, false });
+
+	enum IO_error input_status = NO_IO_ERR, output_status = NO_IO_ERR;
 
 	while (input_status != FILE_ENDED) {
 		input_status = input_coefficients(input, &coeffs);
 
-		if (input_status != NO_ERR) {
-			print_error(output, input_status);
+		if (input_status != NO_IO_ERR) {
+			log_error(input_status);
 		} else {
 			solve_quadratic(coeffs, &roots);
 
 			output_status = output_roots(output, roots);
-			print_error(output, output_status);
+			log_error(output_status);
 		}
 	}
+
+	close_logger();
 
 	return 0;
 }

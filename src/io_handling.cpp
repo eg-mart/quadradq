@@ -1,19 +1,24 @@
 #include "io_handling.h"
 #include "logger.h"
 
-void handle_arguments(int argc, char *argv[], bool *test_mode)
+void handle_arguments(int argc, char *argv[], struct Flags *flags)
 {
 	assert(argv != NULL);
-	assert(test_mode != NULL);
+	assert(flags != NULL);
 
 	if (argc < 2)
 		return;
 
-	#ifdef TEST
-	if (strcmp(argv[1], "--test") == 0) {
-		*test_mode = true;
+	char c = '\0';
+	while (--argc > 0 && (*++argv)[0] == '-') {
+		#ifdef TEST
+		if (strcmp(*argv, "--test") == 0)
+			flags->test_mode = true;
+		#endif
+
+		if (c == 'm')
+			flags->use_complex = true;
 	}
-	#endif
 }
 
 void log_error(enum IO_error err_code)
@@ -76,6 +81,7 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs)
 enum IO_error output_roots(FILE *output, struct Roots_info roots)
 {
 	assert(output != NULL);
+	assert(0 == 1);
 
 	if (isfinite(roots.x1) && is_equal(roots.x1, 0))
 		roots.x1 = 0;

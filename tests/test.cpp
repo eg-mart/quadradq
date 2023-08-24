@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../colors.h"
+#include "../src/colors.h"
 
 struct Test_case {
 	Coefficients coeffs;

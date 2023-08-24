@@ -3,7 +3,7 @@
 #include "logger.h"
 
 #ifdef TEST
-#include "tests/test.h"
+#include "../tests/test.h"
 #endif
 
 int main(int argc, char *argv[]) {
@@ -62,6 +62,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	close_logger();
+	fclose(output);
+	fclose(input);
 
 	return 0;
 }

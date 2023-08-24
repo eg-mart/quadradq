@@ -17,32 +17,34 @@ CC = g++
 
 all : quadradq
 
-OBJS = equation_solver.o main.o io_handling.o logger.o
+OBJS_NAMES = equation_solver.o main.o io_handling.o logger.o
+OBJDIR = build
+OBJS = $(addprefix $(OBJDIR)/, $(OBJS_NAMES))
 
 testing : CFLAGS += -DTEST
-testing : OBJS += test.o
-testing : test.o quadradq
+testing : OBJS += $(OBJDIR)/test.o
+testing : $(OBJDIR)/test.o quadradq
 
 quadradq : $(OBJS)
 	$(CC) $(CFLAGS) -o quadradq $(OBJS)
 
-main.o : main.cpp equation_solver.h tests/test.h io_handling.h logger.h
-	$(CC) $(CFLAGS) -c main.cpp
+$(OBJDIR)/main.o : src/main.cpp src/equation_solver.h tests/test.h src/io_handling.h src/logger.h
+	$(CC) $(CFLAGS) -c src/main.cpp -o $(OBJDIR)/main.o
 
-equation_solver.o : equation_solver.cpp equation_solver.h
-	$(CC) $(CFLAGS) -c equation_solver.cpp
+$(OBJDIR)/equation_solver.o : src/equation_solver.cpp src/equation_solver.h
+	$(CC) $(CFLAGS) -c src/equation_solver.cpp -o $(OBJDIR)/equation_solver.o
 
-test.o : tests/test.cpp tests/test.h
-	$(CC) $(CFLAGS) -c tests/test.cpp
+$(OBJDIR)/test.o : tests/test.cpp tests/test.h
+	$(CC) $(CFLAGS) -c tests/test.cpp -o $(OBJDIR)/test.o
 
-io_handling.o : io_handling.cpp io_handling.h
-	$(CC) $(CFLAGS) -c io_handling.cpp
+$(OBJDIR)/io_handling.o : src/io_handling.cpp src/io_handling.h
+	$(CC) $(CFLAGS) -c src/io_handling.cpp -o $(OBJDIR)/io_handling.o
 
-logger.o : logger.cpp logger.h
-	$(CC) $(CFLAGS) -c logger.cpp
+$(OBJDIR)/logger.o : src/logger.cpp src/logger.h
+	$(CC) $(CFLAGS) -c src/logger.cpp -o $(OBJDIR)/logger.o
 
 clean :
-	rm quadradq $(OBJS) test.o
+	rm quadradq $(OBJS) $(OBJDIR)/test.o
 
 html : docs/html/index.html
 docs/html/index.html : main.cpp equation_solver.cpp equation_solver.h tests/test.cpp tests/test.h Doxyfile

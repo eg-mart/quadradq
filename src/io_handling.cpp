@@ -81,7 +81,6 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs)
 enum IO_error output_roots(FILE *output, struct Roots_info roots)
 {
 	assert(output != NULL);
-	assert(0 == 1);
 
 	if (isfinite(roots.x1) && is_equal(roots.x1, 0))
 		roots.x1 = 0;

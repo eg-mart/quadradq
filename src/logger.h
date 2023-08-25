@@ -1,11 +1,6 @@
 #ifndef LOGGER_MODULE
 #define LOGGER_MODULE
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include "assert.h"
-
 enum Log_level {
 	DEBUG,
 	INFO,

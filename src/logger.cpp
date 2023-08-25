@@ -8,7 +8,7 @@
 
 struct Logger LOGGER;
 
-void init_logger()
+void logger_ctor()
 {
 	LOGGER.handlers = NULL;
 	LOGGER.num_handlers = 0;
@@ -17,7 +17,7 @@ void init_logger()
 enum Log_error add_log_handler(struct Log_handler handler)
 {
 	if (LOGGER.handlers == NULL) {
-		LOGGER.handlers = (Log_handler*) malloc(sizeof(Log_handler));
+		LOGGER.handlers = (Log_handler*) calloc(1, sizeof(Log_handler));
 		if (LOGGER.handlers == NULL) {
 			return ERR_MEM;
 		}
@@ -34,7 +34,7 @@ enum Log_error add_log_handler(struct Log_handler handler)
 	return NO_LOG_ERR;
 }
 
-void close_logger()
+void logger_dtor()
 {
 	free(LOGGER.handlers);
 }

@@ -10,7 +10,7 @@
 #endif
 
 int main(int argc, char *argv[]) {
-	init_logger();
+	logger_ctor();
 	add_log_handler({ stderr, DEBUG, true });
 
 	struct Args args = { false, false, NULL, NULL };
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 
 	if (arg_status < 0) {
 		log_error(arg_status);
-		close_logger();
+		logger_dtor();
 		return 1;
 	}
 
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 		input = fopen(args.input_filename, "r");
 		if (input == NULL) {
 			log_error(ERR_FILE_OPEN);
-			close_logger();
+			logger_dtor();
 			return 1;
 		}
 	}
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 		output = fopen(args.output_filename, "w");
 		if (output == NULL) {
 			log_error(ERR_FILE_OPEN);
-			close_logger();
+			logger_dtor();
 			return 1;
 		}
 	}
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	close_logger();
+	logger_dtor();
 	fclose(output);
 	fclose(input);
 

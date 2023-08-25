@@ -25,9 +25,9 @@ struct Log_handler {
 	bool use_colors;
 };
 
-void init_logger();
+void logger_ctor();
 enum Log_error add_log_handler(struct Log_handler handler);
-void close_logger();
+void logger_dtor();
 enum Log_error log_message(enum Log_level level, const char *message, ...);
 
 #endif

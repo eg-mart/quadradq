@@ -3,8 +3,8 @@
 #include "equation_solver.h"
 
 struct Test_case {
-	Coefficients coeffs;
-	Roots_info roots;
+	struct Coefficients coeffs;
+	struct Roots_info roots;
 };
 
 struct Test_case tests[] = {

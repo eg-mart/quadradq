@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <math.h>
+
 #include "equation_solver.h"
 #include "io_handling.h"
 #include "logger.h"

@@ -1,5 +1,11 @@
-#include "io_handling.h"
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+
 #include "logger.h"
+#include "assert.h"
+#include "equation_solver.h"
+#include "io_handling.h"
 
 void handle_arguments(int argc, char *argv[], struct Flags *flags)
 {

@@ -1,12 +1,6 @@
 #ifndef IO_HANDLING
 #define IO_HANDLING
 
-#include "assert.h"
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-#include "equation_solver.h"
-
 enum IO_error {
 	NO_IO_ERR,
 	FILE_ENDED,

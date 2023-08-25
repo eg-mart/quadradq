@@ -1,10 +1,6 @@
 #ifndef EQUATION_SOLVER
 #define EQUATION_SOLVER
 
-#include <math.h>
-#include "assert.h"
-#include <float.h>
-
 enum Num_roots {
 	ZERO_ROOTS,
 	ONE_ROOT,
@@ -50,14 +46,5 @@ void solve_quadratic(struct Coefficients coeffs, struct Roots_info *roots);
 * @param [out] roots a pointer to a struct containing roots x1, x2 and a number of roots
 */
 void solve_linear(double a, double b, struct Roots_info *roots);
-
-/**
-* Calculates a discriminant for a given equation ax^2 + bx + c = 0.
-*
-* @param [in] coeffs a struct containing a, b and c coefficients
-*
-* @return a discriminant value
-*/
-double calc_discrim(struct Coefficients coeffs);
 
 #endif

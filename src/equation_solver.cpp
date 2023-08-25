@@ -1,3 +1,7 @@
+#include <math.h>
+#include <float.h>
+
+#include "assert.h"
 #include "equation_solver.h"
 
 const double PRECISION = 1e-6;
@@ -14,7 +18,7 @@ void solve_quadratic(struct Coefficients coeffs, struct Roots_info *roots)
 		return;
 	}
 
-	double discmnt = calc_discrim(coeffs);
+	double discmnt = coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 
 	if (discmnt < 0) {
 		roots->n = ZERO_ROOTS;
@@ -56,15 +60,6 @@ void solve_linear(double a, double b, struct Roots_info *roots)
 	roots->x1 = round(roots->x1 / PRECISION) * PRECISION;
 
 	return;
-}
-
-double calc_discrim(struct Coefficients coeffs)
-{
-	assert(isfinite(coeffs.a));
-	assert(isfinite(coeffs.b));
-	assert(isfinite(coeffs.c));
-
-	return coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 }
 
 int is_equal(double x, double y)

@@ -108,25 +108,33 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs)
 	return NO_IO_ERR;
 }
 
-enum IO_error output_roots(FILE *output, struct Roots_info roots)
+enum IO_error output_roots(FILE *output, struct Roots_info roots, bool use_complex)
 {
 	assert(output != NULL);
 
-	if (isfinite(roots.x1) && is_equal(roots.x1, 0))
-		roots.x1 = 0;
+	if (isfinite(roots.x1.real) && is_equal(roots.x1.real, 0))
+		roots.x1.real = 0;
 
-	if (isfinite(roots.x2) && is_equal(roots.x2, 0))
-		roots.x2 = 0;
+	if (isfinite(roots.x2.real) && is_equal(roots.x2.real, 0))
+		roots.x2.real = 0;
 
 	switch (roots.n) {
+		case TWO_ROOTS_CMPLX:
+			if (use_complex)
+				fprintf(output, "%lg%+lg*i, %lg%+lg*i\n",
+						roots.x1.real, roots.x1.imag,
+						roots.x2.real, roots.x2.imag);
+			else
+				fprintf(output, "no roots\n"); 
+			break;
 		case ZERO_ROOTS:
 			fprintf(output, "no roots\n");
 			break;
 		case ONE_ROOT:
-			fprintf(output, "%lg\n", roots.x1);
+			fprintf(output, "%lg\n", roots.x1.real);
 			break;
 		case TWO_ROOTS:
-			fprintf(output, "%lg %lg\n", roots.x1, roots.x2);
+			fprintf(output, "%lg %lg\n", roots.x1.real, roots.x2.real);
 			break;
 		case INF_ROOTS:
 			fprintf(output, "infinite roots\n");

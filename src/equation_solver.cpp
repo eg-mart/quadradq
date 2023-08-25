@@ -20,24 +20,32 @@ void solve_quadratic(struct Coefficients coeffs, struct Roots_info *roots)
 
 	double discmnt = coeffs.b * coeffs.b - 4 * coeffs.a * coeffs.c;
 
+	struct Complex sqrt_discmnt = sqrt_complex(discmnt);
+	struct Complex neg_b = { -coeffs.b, 0 };
+	roots->x1 = divide_complex_by_const(subtract_complex(neg_b, sqrt_discmnt),
+										2 * coeffs.a);
+	roots->x2 = divide_complex_by_const(add_complex(neg_b, sqrt_discmnt),
+										2 * coeffs.a);
+
+	struct Complex tmp = { NAN, NAN };
+
+	tmp = round_complex(multiply_complex_by_const(roots->x1, 1 / PRECISION));
+	roots-> x1 = multiply_complex_by_const(tmp, PRECISION);
+
+	tmp = round_complex(multiply_complex_by_const(roots->x2, 1 / PRECISION));
+	roots-> x2 = multiply_complex_by_const(tmp, PRECISION);
+
 	if (discmnt < 0) {
-		roots->n = ZERO_ROOTS;
+		roots->n = TWO_ROOTS_CMPLX;
 		return;
 	}
 
-	double sqrt_discmnt = sqrt(discmnt);
-	roots->x1 = (-coeffs.b - sqrt_discmnt) / (2 * coeffs.a);
-	roots->x1 = round(roots->x1 / PRECISION) * PRECISION;
-
 	if (discmnt > 0) {
-		roots->x2 = (-coeffs.b + sqrt_discmnt) / (2 * coeffs.a);
-		roots->x2 = round(roots->x2 / PRECISION) * PRECISION;
 		roots->n = TWO_ROOTS;
 		return;
 	}
 
 	roots->n = ONE_ROOT;
-	return;
 }
 
 void solve_linear(double a, double b, struct Roots_info *roots)
@@ -56,10 +64,7 @@ void solve_linear(double a, double b, struct Roots_info *roots)
 	}
 
 	roots->n = ONE_ROOT;
-	roots->x1 = -b / a;
-	roots->x1 = round(roots->x1 / PRECISION) * PRECISION;
-
-	return;
+	roots->x1 = { -b / a, 0 };
 }
 
 int is_equal(double x, double y)

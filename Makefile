@@ -18,7 +18,7 @@ CC = g++
 
 all : quadradq
 
-OBJS_NAMES = equation_solver.o main.o io_handling.o logger.o
+OBJS_NAMES = equation_solver.o main.o io_handling.o logger.o complex.o
 OBJDIR = build
 OBJS = $(addprefix $(OBJDIR)/, $(OBJS_NAMES))
 
@@ -29,7 +29,7 @@ testing : $(OBJDIR)/test.o quadradq
 quadradq : $(OBJS)
 	$(CC) $(CFLAGS) -o quadradq $(OBJS)
 
-$(OBJDIR)/main.o : src/main.cpp src/equation_solver.h tests/test.h src/io_handling.h src/logger.h
+$(OBJDIR)/main.o : src/main.cpp src/equation_solver.h tests/test.h src/io_handling.h src/logger.h src/complex.h
 	$(CC) $(CFLAGS) -c src/main.cpp -o $(OBJDIR)/main.o
 
 $(OBJDIR)/equation_solver.o : src/equation_solver.cpp src/equation_solver.h
@@ -43,6 +43,9 @@ $(OBJDIR)/io_handling.o : src/io_handling.cpp src/io_handling.h
 
 $(OBJDIR)/logger.o : src/logger.cpp src/logger.h
 	$(CC) $(CFLAGS) -c src/logger.cpp -o $(OBJDIR)/logger.o
+
+$(OBJDIR)/complex.o : src/complex.cpp src/complex.h
+	$(CC) $(CFLAGS) -c src/complex.cpp -o $(OBJDIR)/complex.o
 
 clean :
 	rm quadradq $(OBJS) $(OBJDIR)/test.o

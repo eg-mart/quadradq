@@ -2,10 +2,10 @@
 #define LOGGER_MODULE
 
 enum Log_level {
-	DEBUG,
-	INFO,
-	WARN,
-	ERROR
+	DEBUG	=	0,
+	INFO	=	1,
+	WARN	=	2,
+	ERROR	=	3
 };
 
 enum Log_error {

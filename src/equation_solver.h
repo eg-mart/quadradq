@@ -1,11 +1,14 @@
 #ifndef EQUATION_SOLVER
 #define EQUATION_SOLVER
 
+#include "complex.h"
+
 enum Num_roots {
-	INF_ROOTS	=	-1,
-	ZERO_ROOTS	=	0,
-	ONE_ROOT	=	1,
-	TWO_ROOTS	=	2
+	TWO_ROOTS_CMPLX	=	-2,
+	INF_ROOTS		=	-1,
+	ZERO_ROOTS		=	0,
+	ONE_ROOT		=	1,
+	TWO_ROOTS		=	2
 };
 
 struct Coefficients {
@@ -15,8 +18,8 @@ struct Coefficients {
 };
 
 struct Roots_info {
-	double x1;
-	double x2;
+	struct Complex x1;
+	struct Complex x2;
 	enum Num_roots n;
 };
 

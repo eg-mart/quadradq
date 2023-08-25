@@ -55,17 +55,17 @@ int main(int argc, char *argv[]) {
 	enum IO_error input_status = NO_IO_ERR, output_status = NO_IO_ERR;
 
 	struct Coefficients coeffs = { NAN, NAN, NAN };
-	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
+	struct Roots_info roots = { { NAN, NAN }, { NAN, NAN }, ZERO_ROOTS };
 
 	while (input_status != FILE_ENDED) {
 		input_status = input_coefficients(input, &coeffs);
 
 		if (input_status < 0) {
 			log_error(input_status);
-		} else {
+		} else if (input_status != FILE_ENDED) {
 			solve_quadratic(coeffs, &roots);
 
-			output_status = output_roots(output, roots);
+			output_status = output_roots(output, roots, args.use_complex);
 
 			if (output_status < 0)
 				log_error(output_status);

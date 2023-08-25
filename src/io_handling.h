@@ -40,7 +40,7 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs);
 *
 * @return NO_IO_ERR if no errors were encountered, error code otherwise
 */
-enum IO_error output_roots(FILE *output, struct Roots_info roots);
+enum IO_error output_roots(FILE *output, struct Roots_info roots, bool use_complex);
 
 /**
 * Writes a message corresponding to the error code to the error file.

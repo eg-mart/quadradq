@@ -30,8 +30,6 @@ struct Log_handler {
 	bool use_colors;
 };
 
-const int _BUFF_SIZE = 1024;
-
 void init_logger();
 enum Log_error add_log_handler(struct Log_handler handler);
 void close_logger();

@@ -1,6 +1,8 @@
 #ifndef LOGGER_MODULE
 #define LOGGER_MODULE
 
+#include <stdio.h>
+
 enum Log_level {
 	DEBUG	=	0,
 	INFO	=	1,
@@ -30,5 +32,6 @@ void logger_ctor();
 void logger_dtor();
 enum Log_error add_log_handler(struct Log_handler handler);
 enum Log_error log_message(enum Log_level level, const char *message, ...);
+enum Log_error log_test(bool is_succesful, int num_test, const char *message, ...);
 
 #endif

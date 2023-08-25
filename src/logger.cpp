@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
@@ -7,6 +6,9 @@
 #include "logger.h"
 
 struct Logger LOGGER;
+
+enum Log_error do_log(enum Log_level level, const char *prefix, const char *color,
+					  const char *message, va_list args);
 
 void logger_ctor()
 {
@@ -41,6 +43,37 @@ void logger_dtor()
 	free(LOGGER.handlers);
 }
 
+enum Log_error do_log(enum Log_level level, const char *prefix, const char *color,
+					  const char *message, va_list args)
+{
+	assert(message != NULL);
+	assert(prefix != NULL);
+	assert(color != NULL);
+
+	const size_t BUFF_SIZE = 1024;
+	char buff[BUFF_SIZE] = "";
+	
+	vsnprintf(buff, BUFF_SIZE, message, args);
+	
+	bool error = 0;
+	for (size_t i = 0; i < LOGGER.num_handlers; i++) {
+		if (level < LOGGER.handlers[i].level)
+			continue;
+		
+		if (LOGGER.handlers[i].use_colors)
+			fprintf(LOGGER.handlers[i].output, "%s%s%s %s",
+					color, prefix, RESET_COLOR, buff);
+		else
+			fprintf(LOGGER.handlers[i].output, "%s %s", prefix, buff);
+
+		error = error && ferror(LOGGER.handlers[i].output);
+	}
+	
+	if (error)
+		return ERR_WRITE;
+	return NO_LOG_ERR;
+}
+
 enum Log_error log_message(enum Log_level level, const char *message, ...)
 {
 	assert(message != NULL);
@@ -48,53 +81,47 @@ enum Log_error log_message(enum Log_level level, const char *message, ...)
 	va_list args;
 	va_start(args, message);
 
-	const size_t _BUFF_SIZE = 1024;
-	char buff[_BUFF_SIZE] = "";
+	enum Log_error status = NO_LOG_ERR;
 
-	const char *color = NULL;
-	const char *prefix = NULL;
-
-	vsnprintf(buff, _BUFF_SIZE, message, args);
-
-	bool error = 0;
-
-	for (size_t i = 0; i < LOGGER.num_handlers; i++) {
-		if (level < LOGGER.handlers[i].level)
-			continue;
-
-		switch (level) {
-			case ERROR:
-				color = RED;
-				prefix = "[ERROR]";
-				break;
-			case WARN:
-				color = YELLOW;
-				prefix = "[WARNING]";
-				break;
-			case INFO:
-				color = BLUE;
-				prefix = "[INFO]";
-				break;
-			case DEBUG:
-				color = GREEN;
-				prefix = "[DEBUG]";
-				break;
-			default:
-				color = RED;
-				prefix = "[UNKNOWN]";
-		}
-
-		if (LOGGER.handlers[i].use_colors)
-			fprintf(LOGGER.handlers[i].output, "%s%s %s%s",
-					color, prefix, buff, RESET_COLOR);
-		else
-			fprintf(LOGGER.handlers[i].output, "%s %s", prefix, buff);
-		error = error && ferror(LOGGER.handlers[i].output);
+	switch (level) {
+		case ERROR:
+			status = do_log(level, "[ERROR]", RED, message, args);
+			break;
+		case WARN:
+			status = do_log(level, "[WARNING]", YELLOW, message, args);
+			break;
+		case INFO:
+			status = do_log(level, "[INFO]", BLUE, message, args);
+			break;
+		case DEBUG:
+			status = do_log(level, "[DEBUG]", GREEN, message, args);
+			break;
+		default:
+			status = do_log(level, "[UNKNOWN]", RED, message, args);
 	}
 
 	va_end(args);
 
-	if (error)
-		return ERR_WRITE;
-	return NO_LOG_ERR;
+	return status;
+}
+
+enum Log_error log_test(bool is_succesful, int num_test, const char *message, ...) {
+	assert(message != NULL);
+	
+	va_list args;
+	va_start(args, message);
+
+	enum Log_error status = NO_LOG_ERR;
+	const size_t PREF_SIZE = 256;
+	char prefix[PREF_SIZE] = "";
+
+	if (is_succesful) {
+		sprintf(prefix, "test %d OK", num_test);
+		status = do_log(ERROR, prefix, GREEN, message, args);
+	} else {
+		sprintf(prefix, "test %d FAILED:", num_test);
+		status = do_log(ERROR, prefix, RED, message, args);
+	}
+
+	return status;
 }

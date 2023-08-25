@@ -64,13 +64,14 @@ void log_error(enum IO_error err_code)
 			log_message(ERROR, "Error writing to a file\n");
 			break;
 		case ERR_FORMAT:
-			log_message(WARN, "wrong input format\n");
+			log_message(WARN, "Wrong input format\n");
 			break;
 		case ERR_BAD_DATA:
 			log_message(WARN, "Bad input data\n");
 			break;
 		case ERR_WRONG_ARG:
-			log_message(ERROR, "Wrong arguments. Usage: quadradq input [output]\n");
+			log_message(ERROR, "Wrong arguments. Usage: quadradq [--test]"
+							   "[-i input_file] [-o output_file] [-m]\n");
 			break;
 		case ERR_NO_FILENAME:
 			log_message(ERROR, "-i and -o flags require a filename after them.\n");

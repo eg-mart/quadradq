@@ -17,18 +17,20 @@ void logger_ctor()
 enum Log_error add_log_handler(struct Log_handler handler)
 {
 	if (LOGGER.handlers == NULL) {
-		LOGGER.handlers = (Log_handler*) calloc(1, sizeof(Log_handler));
+		LOGGER.handlers = (Log_handler*) calloc(3, sizeof(Log_handler));
 		if (LOGGER.handlers == NULL) {
 			return ERR_MEM;
 		}
-		LOGGER.num_handlers++;
-	} else {
-		LOGGER.handlers = (Log_handler*) realloc(LOGGER.handlers, ++LOGGER.num_handlers *
+		LOGGER.capacity = 3;
+	} else if (LOGGER.capacity <= LOGGER.num_handlers) {
+		LOGGER.capacity += 3;
+		LOGGER.handlers = (Log_handler*) realloc(LOGGER.handlers, LOGGER.capacity *
 												 sizeof(Log_handler));
 		if (LOGGER.handlers == NULL)
 			return ERR_MEM;
 	}
 
+	LOGGER.num_handlers++;
 	LOGGER.handlers[LOGGER.num_handlers - 1] = handler;
 
 	return NO_LOG_ERR;
@@ -46,17 +48,17 @@ enum Log_error log_message(enum Log_level level, const char *message, ...)
 	va_list args;
 	va_start(args, message);
 
-	const int _BUFF_SIZE = 1024;
+	const size_t _BUFF_SIZE = 1024;
 	char buff[_BUFF_SIZE] = "";
 
-	const char *color;
-	const char *prefix;
+	const char *color = NULL;
+	const char *prefix = NULL;
 
 	vsnprintf(buff, _BUFF_SIZE, message, args);
 
 	bool error = 0;
 
-	for (unsigned int i = 0; i < LOGGER.num_handlers; i++) {
+	for (size_t i = 0; i < LOGGER.num_handlers; i++) {
 		if (level < LOGGER.handlers[i].level)
 			continue;
 

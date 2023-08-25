@@ -15,7 +15,8 @@ enum Log_error {
 };
 
 struct Logger {
-	unsigned int num_handlers;
+	size_t num_handlers;
+	size_t capacity;
 	struct Log_handler *handlers;
 };
 
@@ -26,8 +27,8 @@ struct Log_handler {
 };
 
 void logger_ctor();
-enum Log_error add_log_handler(struct Log_handler handler);
 void logger_dtor();
+enum Log_error add_log_handler(struct Log_handler handler);
 enum Log_error log_message(enum Log_level level, const char *message, ...);
 
 #endif

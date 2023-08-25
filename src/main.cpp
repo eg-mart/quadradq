@@ -13,14 +13,17 @@ int main(int argc, char *argv[]) {
 	init_logger();
 	add_log_handler({ stderr, DEBUG, true });
 
-	struct Coefficients coeffs = { NAN, NAN, NAN };
-	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
+	struct Args args = { false, false, NULL, NULL };
+	enum IO_error arg_status = handle_arguments(argc, argv, &args);
 
-	struct Flags flags = { false, false };
-	handle_arguments(argc, argv, &flags);
+	if (arg_status != NO_IO_ERR && arg_status != ERR_NO_ARGS) {
+		log_error(arg_status);
+		close_logger();
+		return 1;
+	}
 
 	#ifdef TEST
-	if (flags.test_mode) {
+	if (args.test_mode) {
 		run_tests();
 		return 0;
 	}
@@ -28,18 +31,18 @@ int main(int argc, char *argv[]) {
 
 	FILE *input = stdin, *output = stdout;
 
-	if (argc > 3) {
-		log_error(ERR_ARG_CNT);
-		close_logger();
-		return 1;
-	} else if (argc > 1) {
-		if ((input = fopen(argv[1], "r")) == NULL) {
+	if (args.input_filename != NULL) {
+		input = fopen(args.input_filename, "r");
+		if (input == NULL) {
 			log_error(ERR_FILE_OPEN);
 			close_logger();
 			return 1;
 		}
+	}
 
-		if (argc == 3 && (output = fopen(argv[2], "w")) == NULL) {
+	if (args.output_filename != NULL) {
+		output = fopen(args.output_filename, "w");
+		if (output == NULL) {
 			log_error(ERR_FILE_OPEN);
 			close_logger();
 			return 1;
@@ -50,6 +53,9 @@ int main(int argc, char *argv[]) {
 		add_log_handler({ output, WARN, false });
 
 	enum IO_error input_status = NO_IO_ERR, output_status = NO_IO_ERR;
+
+	struct Coefficients coeffs = { NAN, NAN, NAN };
+	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
 
 	while (input_status != FILE_ENDED) {
 		input_status = input_coefficients(input, &coeffs);

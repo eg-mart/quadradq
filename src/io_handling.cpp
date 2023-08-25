@@ -7,24 +7,51 @@
 #include "equation_solver.h"
 #include "io_handling.h"
 
-void handle_arguments(int argc, char *argv[], struct Flags *flags)
+enum IO_error handle_arguments(int argc, char *argv[], struct Args *args)
 {
 	assert(argv != NULL);
-	assert(flags != NULL);
+	assert(args != NULL);
 
 	if (argc < 2)
-		return;
+		return ERR_NO_ARGS;
 
 	char c = '\0';
 	while (--argc > 0 && (*++argv)[0] == '-') {
 		#ifdef TEST
-		if (strcmp(*argv, "--test") == 0)
-			flags->test_mode = true;
+		if (strcmp(*argv, "--test") == 0) {
+			args->test_mode = true;
+			continue;
+		}
 		#endif
 
-		if (c == 'm')
-			flags->use_complex = true;
+		bool flags_ended = false;
+		while ((c = *++argv[0]) && !flags_ended)
+			switch (c) {
+				case 'm':
+					args->use_complex = true;
+					break;
+				case 'i':
+					if (argc < 2 || *++argv[0] != '\0' || (*++argv)[0] == '-')
+						return ERR_NO_FILENAME;
+					args->input_filename = argv[0];
+					argc--;
+					flags_ended = true;
+					break;
+				case 'o':
+					if (argc < 2 || *++argv[0] != '\0' || (*++argv)[0] == '-')
+						return ERR_NO_FILENAME;
+					args->output_filename = argv[0];
+					argc--;
+					flags_ended = true;
+					break;
+				default:
+					return ERR_WRONG_ARG;
+			}
 	}
+
+	if (argc > 0)
+		return ERR_WRONG_ARG;
+	return NO_IO_ERR;
 }
 
 void log_error(enum IO_error err_code)
@@ -37,23 +64,26 @@ void log_error(enum IO_error err_code)
 		case ERR_NO_ARGS:
 			return;
 		case ERR_FILE_OPEN:
-			log_message(ERROR, "error opening a file\n");
+			log_message(ERROR, "Error opening a file\n");
 			break;
 		case ERR_FILE_WRITE:
-			log_message(ERROR, "error writing to a file\n");
+			log_message(ERROR, "Error writing to a file\n");
 			break;
 		case ERR_FORMAT:
 			log_message(WARN, "wrong input format\n");
 			break;
 		case ERR_BAD_DATA:
-			log_message(WARN, "bad input data\n");
+			log_message(WARN, "Bad input data\n");
 			break;
-		case ERR_ARG_CNT:
+		case ERR_WRONG_ARG:
 			log_message(ERROR, "Wrong arguments. Usage: quadradq input [output]\n");
+			break;
+		case ERR_NO_FILENAME:
+			log_message(ERROR, "-i and -o flags require a filename after them.\n");
 			break;
 		case ERR_UNKNOWN:
 		default:
-			log_message(ERROR, "[ERROR] an unknown error occured\n");
+			log_message(ERROR, "An unknown error occured\n");
 	}
 }
 

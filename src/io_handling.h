@@ -9,13 +9,16 @@ enum IO_error {
 	ERR_FORMAT,
 	ERR_BAD_DATA,
 	ERR_UNKNOWN,
-	ERR_ARG_CNT,
-	ERR_NO_ARGS
+	ERR_WRONG_ARG,
+	ERR_NO_ARGS,
+	ERR_NO_FILENAME
 };
 
-struct Flags {
+struct Args {
 	bool test_mode;
 	bool use_complex;
+	const char *input_filename;
+	const char *output_filename;
 };
 
 /**
@@ -54,6 +57,6 @@ void log_error(enum IO_error err_code);
 * @param [in]  argv      array of pointers to arguments
 * @param [out] test_mode pointer to a testing mode flag
 */
-void handle_arguments(int argc, char *argv[], struct Flags *flags);
+enum IO_error handle_arguments(int argc, char *argv[], struct Args *args);
 
 #endif

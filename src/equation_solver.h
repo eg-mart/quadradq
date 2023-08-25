@@ -2,10 +2,10 @@
 #define EQUATION_SOLVER
 
 enum Num_roots {
-	ZERO_ROOTS,
-	ONE_ROOT,
-	TWO_ROOTS,
-	INF_ROOTS
+	INF_ROOTS	=	-1,
+	ZERO_ROOTS	=	0,
+	ONE_ROOT	=	1,
+	TWO_ROOTS	=	2
 };
 
 struct Coefficients {

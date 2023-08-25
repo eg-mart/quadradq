@@ -119,13 +119,13 @@ enum IO_error output_roots(FILE *output, struct Roots_info roots)
 		roots.x2 = 0;
 
 	switch (roots.n) {
-		case 0:
+		case ZERO_ROOTS:
 			fprintf(output, "no roots\n");
 			break;
-		case 1:
+		case ONE_ROOT:
 			fprintf(output, "%lg\n", roots.x1);
 			break;
-		case 2:
+		case TWO_ROOTS:
 			fprintf(output, "%lg %lg\n", roots.x1, roots.x2);
 			break;
 		case INF_ROOTS:

@@ -1,5 +1,5 @@
 #include "test.h"
-#include "../src/colors.h"
+#include "colors.h"
 
 struct Test_case {
 	Coefficients coeffs;
@@ -29,11 +29,12 @@ void test_quadratic(int test_num, const struct Test_case *test)
 	struct Roots_info roots = { 0, 0 };
 	solve_quadratic(test->coeffs, &roots);
 
-	if (!(is_equal(test->roots.x1, roots.x1) && is_equal(test->roots.x2, roots.x2) &&
-			 is_equal(test->roots.n, roots.n))) {
+	if (!(is_equal(test->roots.x1, roots.x1) &&
+		  is_equal(test->roots.x2, roots.x2) &&
+		  is_equal(test->roots.n, roots.n))) {
 		printf("%stest %d FAILED:%s x1=%lf, x2=%lf, nroots=%d,\n"
 				"expected: x1=%lf, x2=%lf, nroots=%d\n", RED, test_num, RESET_COLOR,
-				roots.x1, roots.x2, roots.n, test->roots.x1, 
+				roots.x1, roots.x2, roots.n, test->roots.x1,
 				test->roots.x2, test->roots.n);
 		return;
 	}

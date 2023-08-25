@@ -3,13 +3,13 @@
 #include "logger.h"
 
 #ifdef TEST
-#include "../tests/test.h"
+#include "test.h"
 #endif
 
 int main(int argc, char *argv[]) {
 	init_logger();
 	add_log_handler({ stderr, DEBUG, true });
-	
+
 	struct Coefficients coeffs = { NAN, NAN, NAN };
 	struct Roots_info roots = { NAN, NAN, ZERO_ROOTS };
 

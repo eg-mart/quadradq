@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	struct Args args = { false, false, NULL, NULL };
 	enum IO_error arg_status = handle_arguments(argc, argv, &args);
 
-	if (arg_status != NO_IO_ERR && arg_status != ERR_NO_ARGS) {
+	if (arg_status < 0) {
 		log_error(arg_status);
 		close_logger();
 		return 1;
@@ -60,13 +60,15 @@ int main(int argc, char *argv[]) {
 	while (input_status != FILE_ENDED) {
 		input_status = input_coefficients(input, &coeffs);
 
-		if (input_status != NO_IO_ERR) {
+		if (input_status < 0) {
 			log_error(input_status);
 		} else {
 			solve_quadratic(coeffs, &roots);
 
 			output_status = output_roots(output, roots);
-			log_error(output_status);
+
+			if (output_status < 0)
+				log_error(output_status);
 		}
 	}
 

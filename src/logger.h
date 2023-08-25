@@ -9,9 +9,9 @@ enum Log_level {
 };
 
 enum Log_error {
-	NO_LOG_ERR,
-	ERR_MEM,
-	ERR_WRITE
+	NO_LOG_ERR	=	0,
+	ERR_MEM		=	-1,
+	ERR_WRITE	=	-2
 };
 
 struct Logger {

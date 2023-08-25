@@ -13,7 +13,7 @@ enum IO_error handle_arguments(int argc, char *argv[], struct Args *args)
 	assert(args != NULL);
 
 	if (argc < 2)
-		return ERR_NO_ARGS;
+		return NO_ARGS;
 
 	char c = '\0';
 	while (--argc > 0 && (*++argv)[0] == '-') {
@@ -57,12 +57,6 @@ enum IO_error handle_arguments(int argc, char *argv[], struct Args *args)
 void log_error(enum IO_error err_code)
 {
 	switch (err_code) {
-		case NO_IO_ERR:
-			return;
-		case FILE_ENDED:
-			return;
-		case ERR_NO_ARGS:
-			return;
 		case ERR_FILE_OPEN:
 			log_message(ERROR, "Error opening a file\n");
 			break;

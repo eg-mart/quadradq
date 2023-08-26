@@ -80,7 +80,7 @@ enum Log_error log_message(enum Log_level level, const char *message, ...);
 /**
 * Logs the result of a test with appropriate prefix and colors
 *
-* @param [in] is_succesfil whether the test was succesful or not
+* @param [in] is_succesful whether the test was succesful or not
 * @param [in] num_test the number of the test to be put in the prefix
 * @param [in] message a pointer to the message format string, composed as for printf
 * @param [in] ... values to print according to the message string (as in printf)

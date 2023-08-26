@@ -51,5 +51,5 @@ clean :
 	rm quadradq $(OBJS) $(OBJDIR)/test.o
 
 html : docs/html/index.html
-docs/html/index.html : src/main.cpp src/equation_solver.cpp src/equation_solver.h tests/test.cpp tests/test.h Doxyfile
+docs/html/index.html : src/equation_solver.h tests/test.h src/complex.h src/logger.h src/io_handling.h Doxyfile
 	doxygen

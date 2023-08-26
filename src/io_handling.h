@@ -51,8 +51,9 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs);
 /**
 * Writes roots to a file. Returns error in case writing failed.
 *
-* @param [out] output pointer to the output file
-* @param [in]  roots  a struct containing x1, x2 roots
+* @param [out] output      pointer to the output file
+* @param [in]  roots       a struct containing x1, x2 roots
+* @param [in]  use_complex whether to output complex numbers or "no roots"
 *
 * @return NO_IO_ERR if no errors were encountered, error code otherwise
 */

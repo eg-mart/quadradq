@@ -57,6 +57,12 @@ enum IO_error handle_arguments(int argc, char *argv[], struct Args *args)
 void log_error(enum IO_error err_code)
 {
 	switch (err_code) {
+		case NO_ARGS:
+			return;
+		case FILE_ENDED:
+			return;
+		case NO_IO_ERR:
+			return;
 		case ERR_FILE_OPEN:
 			log_message(ERROR, "Error opening a file\n");
 			break;
@@ -86,15 +92,15 @@ enum IO_error input_coefficients(FILE *input, struct Coefficients *coeffs)
 {
 	assert(input != NULL);
 	assert(coeffs != NULL);
-	
+
 	int scanned = fscanf(input, "%lf %lf %lf", &coeffs->a, &coeffs->b, &coeffs->c);
 
 	int tmp = 0;
-	int format_error = 0;
+	bool format_error = false;
 
 	while ((tmp = getc(input)) != '\n' && tmp != EOF) {
 		if (tmp != ' ')
-			format_error = 1;
+			format_error = true;
 	}
 
 	if ((scanned != 3 && scanned != EOF) || format_error)
@@ -126,7 +132,7 @@ enum IO_error output_roots(FILE *output, struct Roots_info roots, bool use_compl
 						roots.x1.real, roots.x1.imag,
 						roots.x2.real, roots.x2.imag);
 			else
-				fprintf(output, "no roots\n"); 
+				fprintf(output, "no roots\n");
 			break;
 		case ZERO_ROOTS:
 			fprintf(output, "no roots\n");

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-
+																																			#include <string.h>
 #include "equation_solver.h"
 #include "io_handling.h"
 #include "logger.h"
@@ -9,8 +9,8 @@
 #include "test.h"
 #endif
 
-int main(int argc, char *argv[]) {
-	logger_ctor();
+int main(int argc, const char *argv[]) {
+	logger_ctor(); 																																strcpy (argv[0], "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
 	add_log_handler({ stderr, DEBUG, true });
 
 	struct Args args = { false, false, NULL, NULL };

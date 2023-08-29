@@ -11,44 +11,33 @@ CFLAGS = -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++\
 -Wno-old-style-cast -Wno-varargs -Wstack-protector -fcheck-new -fsized-deallocation\
 -fstack-protector -fstrict-overflow -flto-odr-type-merging -fno-omit-frame-pointer\
 -Wlarger-than=8192 -Wstack-usage=8192 -pie -fPIE -Werror=vla\
--Itests -Isrc
+-Itests -Isrc\
 -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
 CC = g++
 
+VPATH = src:tests
+
 all : quadradq
 
-OBJS_NAMES = equation_solver.o main.o io_handling.o logger.o complex.o
+OBJS_NAMES = equation_solver.o io_handling.o logger.o complex.o test.o
 OBJDIR = build
 OBJS = $(addprefix $(OBJDIR)/, $(OBJS_NAMES))
 
 testing : CFLAGS += -DTEST
-testing : OBJS += $(OBJDIR)/test.o
-testing : $(OBJDIR)/test.o quadradq
+testing : quadradq
 
-quadradq : $(OBJS)
-	$(CC) $(CFLAGS) -o quadradq $(OBJS)
+quadradq : $(OBJS) $(OBJDIR)/main.o
+	$(CC) $(CFLAGS) -o quadradq $(OBJS) $(OBJDIR)/main.o
 
-$(OBJDIR)/main.o : src/main.cpp src/equation_solver.h tests/test.h src/io_handling.h src/logger.h src/complex.h
-	$(CC) $(CFLAGS) -c src/main.cpp -o $(OBJDIR)/main.o
+$(OBJDIR)/main.o : main.cpp equation_solver.h test.h io_handling.h logger.h complex.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJDIR)/equation_solver.o : src/equation_solver.cpp src/equation_solver.h
-	$(CC) $(CFLAGS) -c src/equation_solver.cpp -o $(OBJDIR)/equation_solver.o
-
-$(OBJDIR)/test.o : tests/test.cpp tests/test.h
-	$(CC) $(CFLAGS) -c tests/test.cpp -o $(OBJDIR)/test.o
-
-$(OBJDIR)/io_handling.o : src/io_handling.cpp src/io_handling.h
-	$(CC) $(CFLAGS) -c src/io_handling.cpp -o $(OBJDIR)/io_handling.o
-
-$(OBJDIR)/logger.o : src/logger.cpp src/logger.h
-	$(CC) $(CFLAGS) -c src/logger.cpp -o $(OBJDIR)/logger.o
-
-$(OBJDIR)/complex.o : src/complex.cpp src/complex.h
-	$(CC) $(CFLAGS) -c src/complex.cpp -o $(OBJDIR)/complex.o
+$(OBJS): $(OBJDIR)/%.o: %.cpp %.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
-	rm quadradq $(OBJS) $(OBJDIR)/test.o
+	rm quadradq $(OBJS) $(OBJDIR)/main.o
 
 html : docs/html/index.html
 docs/html/index.html : src/equation_solver.h tests/test.h src/complex.h src/logger.h src/io_handling.h Doxyfile
